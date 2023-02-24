@@ -1,39 +1,53 @@
 
-
-$(window).load(function() {
-    $('#loading').hide();
-});
-
-
-$("#vehiclesButton").click(function(){
-
-    $('#loading').show();
-
-    $.ajax({
-        url: "api/v1/vehicles",
+// Query the server for a list of vehicle IDs
+function get_vehicles(){
+    $.ajax('/api/v1/vehicles/list', {
+        type: 'GET',
         success: function(vehicles){
-            for (const vehicle of vehicles) {
-                console.log(vehicle.carlineName)
-            }
-            $('#loading').hide();
-        }
+            $.each(vehicles, function (i, vehicle) {
+                $('#carList').append($('<option>', { 
+                    value: vehicle.id,
+                    text : vehicle.nickname
+                }));
+            });
+        },
     });
-});
+}
+
+// Get the status of a vehicle by ID
+function get_status(id){
+    $.ajax(`/api/v1/vehicles/${id}/status`, {
+        type: 'GET',
+        success: function(result){
+            $('html').append('<pre>' + JSON.stringify(result, null, 2) + '</pre>')
+        },
+    });
+}
 
 
 
 
 
-$("#statusButton").click(function(){
-
+// Show/hide loading message
+$.ajaxPrefilter(function(options, _, jqXHR) {
+    
     $('#loading').show();
 
-    $.ajax({
-        url: "api/v1/status",
-        success: function(result){
-            console.log(result);
-        }
+    jqXHR.complete(function() {
+        $('#loading').hide();
     });
-
-    $('#loading').hide();
 });
+
+
+// Load car data
+$('#carList').change(function() {
+    get_status($(this).val());
+});
+
+
+// Load vehicles at startup
+$( document ).ready(function() {
+    get_vehicles();
+});
+
+
