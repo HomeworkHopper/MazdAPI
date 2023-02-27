@@ -7,7 +7,10 @@ import pymazda
 
 from flask import Flask, request, jsonify, render_template
 
+from flask_bootstrap import Bootstrap
+
 app = Flask(__name__)
+Bootstrap(app)
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -15,7 +18,7 @@ load_dotenv(dotenv_path)
 ##### Static routes #####
 @app.route('/', methods=['GET'])
 def app_home():
-    return render_template('dash.html')
+    return render_template('dashboard.html')
 
 
 ##### API routes #####
