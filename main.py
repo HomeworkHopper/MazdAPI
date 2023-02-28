@@ -19,25 +19,42 @@ async def dashboard():
 
 
 @app.route('/api/v1/vehicles/list', methods=['GET'])
-async def api_vehicles():
+async def api_get_vehicles():
+    async def get_vehicles(client: pymazda.Client):
+        vehicles = await client.get_vehicles()
+        return vehicles
     return await mazda_api_call(get_vehicles)
 
 
 @app.route('/api/v1/vehicles/<vehicle_id>/status', methods=['GET'])
 async def api_get_status(vehicle_id):
-    return await mazda_api_call(get_status, vehicle_id)
+    async def get_status(client: pymazda.Client):
+        return await client.get_vehicle_status(vehicle_id)
+    return await mazda_api_call(get_status)
 
 
-async def get_vehicles(client):
-    vehicles = await client.get_vehicles()
-    return vehicles
+@app.route('/api/v1/vehicles/<vehicle_id>/start', methods=['GET'])
+async def api_start_engine(vehicle_id):
+    async def start_engine(client: pymazda.Client):
+        return await client.start_engine(vehicle_id)
+    return await mazda_api_call(start_engine)
 
 
-async def get_status(client, vehicle_id):
-    return await client.get_vehicle_status(vehicle_id)
+@app.route('/api/v1/vehicles/<vehicle_id>/unlock', methods=['GET'])
+async def api_unlock_doors(vehicle_id):
+    async def unlock_doors(client: pymazda.Client):
+        return await client.unlock_doors(vehicle_id)
+    return await mazda_api_call(unlock_doors)
 
 
-async def mazda_api_call(api_function: callable, *function_args) -> any:
+@app.route('/api/v1/vehicles/<vehicle_id>/lock', methods=['GET'])
+async def api_lock_doors(vehicle_id):
+    async def lock_doors(client: pymazda.Client):
+        return await client.lock_doors(vehicle_id)
+    return await mazda_api_call(lock_doors)
+
+
+async def mazda_api_call(api_function: callable):
     """
     A function which initializes a MyMazda API connection and executes a provided API function
 
@@ -50,7 +67,7 @@ async def mazda_api_call(api_function: callable, *function_args) -> any:
         client = pymazda.Client(os.environ.get("MAZDA_USERNAME"), os.environ.get("MAZDA_PASSWORD"), "MNAO")
 
         # make the desired request
-        result = await api_function(client, *function_args)
+        result = await api_function(client)
 
         # close the API client connection
         await client.close()
