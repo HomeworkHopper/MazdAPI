@@ -4,8 +4,6 @@ $('#vehicleListDropdown').on('change', function () {
     $('#vehicleActionDropdown').prop('disabled', !$(this).val());
 }).trigger('change');
 
-
-
 $('#getVehiclesButton').on('click', async function () {
 
     show_overlay();
@@ -23,8 +21,8 @@ $('#getVehiclesButton').on('click', async function () {
     $('#vehicleListDropdown').trigger('change');
 
     hide_overlay();
-
 });
+
 
 
 $('#updateStatusButton').on('click', async function() {
@@ -36,5 +34,4 @@ $('#updateStatusButton').on('click', async function() {
     console.log(status);
 
     hide_overlay();
-
 });

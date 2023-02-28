@@ -6,9 +6,9 @@ async function get_vehicles() {
     return result;
 }
 
-async function get_status(id) {
+async function get_status(vehicle_id) {
     const result = await $.ajax({
-        url: `/api/v1/vehicles/${id}/status`,
+        url: `/api/v1/vehicles/${vehicle_id}/status`,
         type: 'GET',
     });
     return result;
