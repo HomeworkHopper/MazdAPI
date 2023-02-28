@@ -14,7 +14,7 @@ async function get_status(vehicle_id) {
     return result;
 }
 
-async function start_engine() {
+async function start_engine(vehicle_id) {
     const result = await $.ajax({
         url: `/api/v1/vehicles/${vehicle_id}/start`,
         type: 'GET',
@@ -22,7 +22,7 @@ async function start_engine() {
     return result;
 }
 
-async function unlock_doors() {
+async function unlock_doors(vehicle_id) {
     const result = await $.ajax({
         url: `/api/v1/vehicles/${vehicle_id}/unlock`,
         type: 'GET',
@@ -30,7 +30,7 @@ async function unlock_doors() {
     return result;
 }
 
-async function lock_doors() {
+async function lock_doors(vehicle_id) {
     const result = await $.ajax({
         url: `/api/v1/vehicles/${vehicle_id}/lock`,
         type: 'GET',
