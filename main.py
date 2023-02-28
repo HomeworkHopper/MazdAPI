@@ -29,7 +29,8 @@ async def api_get_status(vehicle_id):
 
 
 async def get_vehicles(client):
-    return await client.get_vehicles()
+    vehicles = await client.get_vehicles()
+    return vehicles
 
 
 async def get_status(client, vehicle_id):
@@ -45,18 +46,27 @@ async def mazda_api_call(api_function: callable, *function_args) -> any:
     :return: The value(s) returned by the provided function, if any
     """
     try:
-        client = pymazda.Client(os.environ.get("USERNAME"), os.environ.get("PASSWORD"), "MNAO")
+        # initialize the Mazda API client
+        client = pymazda.Client(os.environ.get("MAZDA_USERNAME"), os.environ.get("MAZDA_PASSWORD"), "MNAO")
+
+        # make the desired request
         result = await api_function(client, *function_args)
 
-        return jsonify(
-            success=True,
-            data=result
-        )
+        # close the API client connection
+        await client.close()
+
+        # return the result
+        return jsonify({
+            'success': True,
+            'data': result
+        })
+
     except Exception as e:
-        return jsonify(
-            success=False,
-            data=[str(type(e))]
-        )
+        # return the error message
+        return jsonify({
+            'success': False,
+            'error_msg': str(e)
+        })
 
 
 if __name__ == "__main__":

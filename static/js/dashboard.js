@@ -6,20 +6,29 @@ $('#vehicleListDropdown').on('change', function () {
 
 $('#getVehiclesButton').on('click', async function () {
 
+    // show the loading animation
     show_overlay();
 
-    const vehicles = await get_vehicles();
+    // make the API request
+    const response = await get_vehicles();
 
-    $.each(vehicles, function (i, vehicle) {
-        console.log(vehicle);
-        $('#vehicleListDropdown').append($('<option>', {
-            value: vehicle.id,
-            text: vehicle.nickname
-        }));
-    });
+    // check server response
+    if(response.success) {
+        $.each(response.data, function (i, vehicle) {
+            $('#vehicleListDropdown').append($('<option>', {
+                value: vehicle.id,
+                text: vehicle.nickname
+            }));
+        });
 
-    $('#vehicleListDropdown').trigger('change');
+        // trigger ui update
+        $('#vehicleListDropdown').trigger('change');
+    }
+    else {
+        console.log(response.error_msg)
+    }
 
+    // hide the loading animation
     hide_overlay();
 });
 
@@ -27,11 +36,23 @@ $('#getVehiclesButton').on('click', async function () {
 
 $('#updateStatusButton').on('click', async function() {
 
+    // show the loading animation
     show_overlay();
 
-    const status = await get_status($('#vehicleListDropdown').val());
+    // get the id of the currently selected vehicle
+    const selectedVehicleId = $('#vehicleListDropdown').val();
 
-    console.log(status);
+    // make the API request
+    const response = await get_status(selectedVehicleId);
 
+    // check server response
+    if(response.success) {
+        console.log(response.data);
+    }
+    else {
+        console.log(response.error_msg)
+    }
+
+    // hide the loading animation
     hide_overlay();
 });
