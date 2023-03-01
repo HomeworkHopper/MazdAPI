@@ -59,7 +59,6 @@ async def mazda_api_call(api_function: callable):
     A function which initializes a MyMazda API connection and executes a provided API function
 
     :param api_function: The function to call
-    :param function_args: The arguments to be passed to the provided function
     :return: The value(s) returned by the provided function, if any
     """
     try:

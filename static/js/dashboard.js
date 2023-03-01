@@ -10,7 +10,7 @@ $('#getVehiclesButton').on('click', async function () {
     show_overlay();
 
     // make the API request
-    const response = await get_vehicles();
+    const response = await vehicleApiRequest(Routes.List)
 
     // check server response
     if(response.success) {
@@ -43,7 +43,7 @@ $('#updateStatusButton').on('click', async function() {
     const selectedVehicleId = $('#vehicleListDropdown').val();
 
     // make the API request
-    const response = await get_status(selectedVehicleId);
+    const response = await vehicleApiRequest(Routes.Status, selectedVehicleId);
 
     // check server response
     if(response.success) {

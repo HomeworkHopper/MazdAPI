@@ -1,39 +1,17 @@
-async function get_vehicles() {
-    const result = await $.ajax({
-        url: 'api/v1/vehicles/list',
-        type: 'GET',
-    });
-    return result;
-}
+const Routes = Object.freeze({
+    List: '/api/v1/vehicles/list',
+    Status: '/api/v1/vehicles/<vehicle_id>/status',
+    Start: '/api/v1/vehicles/<vehicle_id>/start',
+    Unlock: '/api/v1/vehicles/<vehicle_id>/unlock',
+    Lock: '/api/v1/vehicles/<vehicle_id>/lock'
+})
 
-async function get_status(vehicle_id) {
-    const result = await $.ajax({
-        url: `/api/v1/vehicles/${vehicle_id}/status`,
-        type: 'GET',
-    });
-    return result;
-}
-
-async function start_engine(vehicle_id) {
-    const result = await $.ajax({
-        url: `/api/v1/vehicles/${vehicle_id}/start`,
-        type: 'GET',
-    });
-    return result;
-}
-
-async function unlock_doors(vehicle_id) {
-    const result = await $.ajax({
-        url: `/api/v1/vehicles/${vehicle_id}/unlock`,
-        type: 'GET',
-    });
-    return result;
-}
-
-async function lock_doors(vehicle_id) {
-    const result = await $.ajax({
-        url: `/api/v1/vehicles/${vehicle_id}/lock`,
-        type: 'GET',
-    });
-    return result;
+async function vehicleApiRequest(route, vehicleId) {
+    if(route !== undefined) {
+        const result = await $.ajax({
+            url: route.replace('<vehicle_id>', vehicleId),
+            type: 'GET',
+        });
+        return result
+    }
 }
