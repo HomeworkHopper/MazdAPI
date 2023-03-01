@@ -1,133 +1,71 @@
 $('#vehicleListDropdown').on('change', function () {
     $('#vehicleListDropdown').prop('hidden', !$(this).val());
-    $('#getStatusButton').prop('disabled', !$(this).val());
+    $('#statusActionButton').prop('disabled', !$(this).val());
     $('#vehicleActionDropdown').prop('disabled', !$(this).val());
 }).trigger('change');
 
-$('#getVehiclesActionButton').on('click', async function () {
+// abstracted function for sending api requests to the server
+function apiRequest(url, successCallback) {
 
-    // show the loading animation
+    // show a loading overlay
     show_overlay();
 
     // make the API request
-    const response = await vehicleApiRequest(Routes.List)
+    fetch(url)
+        .then(response => {
+            if(!response.ok) {
+                throw new Error('server response was not OK (' + response.status + ')')
+            } else {
+                return response.json()
+            }
+        })
+        .then(json => {
+            successCallback(json)
+        }).catch(error => {
+            console.log(error)
+        }).finally(() => {
+            hide_overlay()
+        });
+}
 
-    // check server response
-    if(response.success) {
-        $.each(response.data, function (i, vehicle) {
+// update vehicle list
+$('#getVehiclesActionButton').on('click', () => {
+    apiRequest('/api/v1/vehicles/list', json => {
+        console.log(json)
+        $.each(json.data, function (i, vehicle) {
             $('#vehicleListDropdown').append($('<option>', {
                 value: vehicle.id,
                 text: vehicle.nickname
             }));
         });
-
-        // trigger ui update
-        $('#vehicleListDropdown').trigger('change');
-    }
-    else {
-        console.log(response.error_msg)
-    }
-
-    // hide the loading animation
-    hide_overlay();
+        $('#vehicleListDropdown').change()
+    });
 });
 
-
-// Update Status Button
-$('#statusActionButton').on('click', async function() {
-
-    // show the loading animation
-    show_overlay();
-
-    // get the id of the currently selected vehicle
-    const selectedVehicleId = $('#vehicleListDropdown').val();
-
-    // make the API request
-    const response = await vehicleApiRequest(Routes.Status, selectedVehicleId);
-
-    // check server response
-    if(response.success) {
-        console.log(response.data);
-    }
-    else {
-        console.log(response.error_msg)
-    }
-
-    // hide the loading animation
-    hide_overlay();
+// update status
+$('#statusActionButton').on('click', () => {
+    apiRequest(`/api/v1/vehicles/${$('#vehicleListDropdown').val()}/status`, json => {
+        console.log('status updated: ' + json.data)
+    });
 });
 
-// Start Engine Button
-$('#startEngineActionButton').on('click', async function() {
-
-    // show the loading animation
-    show_overlay();
-
-    // get the id of the currently selected vehicle
-    const selectedVehicleId = $('#vehicleListDropdown').val();
-
-    // make the API request
-    const response = await vehicleApiRequest(Routes.Start, selectedVehicleId);
-
-    // check server response
-    if(response.success) {
-        console.log(response.data);
-        alert("Engine Started");
-    }
-    else {
-        console.log(response.error_msg)
-    }
-
-    // hide the loading animation
-    hide_overlay();
+// start engine
+$('#startEngineActionButton').on('click', () => {
+    apiRequest(`/api/v1/vehicles/${$('#vehicleListDropdown').val()}/start`, json => {
+        console.log('engine started')
+    });
 });
 
-// Lock Doors Button
-$('#lockDoorsActionButton').on('click', async function() {
-
-    // show the loading animation
-    show_overlay();
-
-    // get the id of the currently selected vehicle
-    const selectedVehicleId = $('#vehicleListDropdown').val();
-
-    // make the API request
-    const response = await vehicleApiRequest(Routes.Lock, selectedVehicleId);
-
-    // check server response
-    if(response.success) {
-        console.log(response.data);
-        alert("Doors Locked");
-    }
-    else {
-        console.log(response.error_msg)
-    }
-
-    // hide the loading animation
-    hide_overlay();
+// lock doors
+$('#lockDoorsActionButton').on('click', () => {
+    apiRequest(`/api/v1/vehicles/${$('#vehicleListDropdown').val()}/lock`, json => {
+        console.log('doors locked')
+    });
 });
 
-// Unlock Doors Button
-$('#unlockDoorsActionButton').on('click', async function() {
-
-    // show the loading animation
-    show_overlay();
-
-    // get the id of the currently selected vehicle
-    const selectedVehicleId = $('#vehicleListDropdown').val();
-
-    // make the API request
-    const response = await vehicleApiRequest(Routes.Unlock, selectedVehicleId);
-
-    // check server response
-    if(response.success) {
-        console.log(response.data);
-        alert("Doors Unlocked");
-    }
-    else {
-        console.log(response.error_msg)
-    }
-
-    // hide the loading animation
-    hide_overlay();
+// unlock doors
+$('#unlockDoorsActionButton').on('click', () => {
+    apiRequest(`/api/v1/vehicles/${$('#vehicleListDropdown').val()}/unlock`, json => {
+        console.log('doors unlocked')
+    });
 });
