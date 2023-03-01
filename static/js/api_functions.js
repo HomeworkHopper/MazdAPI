@@ -8,10 +8,19 @@ const Routes = Object.freeze({
 
 async function vehicleApiRequest(route, vehicleId) {
     if(route !== undefined) {
-        const result = await $.ajax({
-            url: route.replace('<vehicle_id>', vehicleId),
-            type: 'GET',
-        });
-        return result
+
+        let response;
+
+        try {
+            response = await fetch(route.replace('<vehicle_id>', vehicleId));
+        } catch(error) {
+            return {success: false, error_msg: `unable to make request: ${error}`}
+        }
+
+        if(response?.ok) {
+            return response.json();
+        } else {
+            return {success: false, error_msg: `HTTP Response Code: ${response?.status}`}
+        }
     }
 }
