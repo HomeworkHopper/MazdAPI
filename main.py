@@ -4,7 +4,7 @@ from os.path import join, dirname
 
 import pymazda
 from dotenv import load_dotenv
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 from flask_api import status
 
 app = Flask(__name__)

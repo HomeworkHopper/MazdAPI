@@ -1,4 +1,3 @@
-
 function show_overlay() {
     $.LoadingOverlay('show');
 }
