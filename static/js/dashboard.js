@@ -2,7 +2,7 @@
 const UI = Object.freeze({
 
     // get vehicles button
-    getVehicles: $('#getVehiclesActionButton')[0],
+    getVehicles: document.getElementById('getVehiclesActionButton'),
 
     // vehicle list dropdown
     vehicleList: document.getElementById('vehicleListDropdown'),
