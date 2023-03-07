@@ -13,6 +13,8 @@ app.secret_key = secrets.token_hex(16)
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
+username = os.environ.get("MAZDA_USERNAME")
+password = os.environ.get("MAZDA_PASSWORD")
 
 @app.route('/', methods=['GET'])
 async def dashboard():
@@ -22,9 +24,7 @@ async def dashboard():
 @app.route('/api/v1/vehicles/list', methods=['GET'])
 async def api_get_vehicles():
     async def get_vehicles(client: pymazda.Client):
-        vehicles = await client.get_vehicles()
-        return vehicles
-
+        return await client.get_vehicles()
     return await mazda_api_call(get_vehicles)
 
 
@@ -32,7 +32,6 @@ async def api_get_vehicles():
 async def api_get_status(vehicle_id):
     async def get_status(client: pymazda.Client):
         return await client.get_vehicle_status(vehicle_id)
-
     return await mazda_api_call(get_status)
 
 
@@ -40,7 +39,6 @@ async def api_get_status(vehicle_id):
 async def api_start_engine(vehicle_id):
     async def start_engine(client: pymazda.Client):
         return await client.start_engine(vehicle_id)
-
     return await mazda_api_call(start_engine)
 
 
@@ -48,7 +46,6 @@ async def api_start_engine(vehicle_id):
 async def api_unlock_doors(vehicle_id):
     async def unlock_doors(client: pymazda.Client):
         return await client.unlock_doors(vehicle_id)
-
     return await mazda_api_call(unlock_doors)
 
 
@@ -56,7 +53,6 @@ async def api_unlock_doors(vehicle_id):
 async def api_lock_doors(vehicle_id):
     async def lock_doors(client: pymazda.Client):
         return await client.lock_doors(vehicle_id)
-
     return await mazda_api_call(lock_doors)
 
 
@@ -69,7 +65,7 @@ async def mazda_api_call(api_function: callable):
     """
     try:
         # initialize the Mazda API client
-        client = pymazda.Client(os.environ.get("MAZDA_USERNAME"), os.environ.get("MAZDA_PASSWORD"), "MNAO")
+        client = pymazda.Client(username, password, "MNAO")
 
         # make the desired request
         result = await api_function(client)

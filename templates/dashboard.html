@@ -9,13 +9,20 @@
         <title>Dashboard</title>
     </head>
     <body>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> Something went wrong.
+            <button type="button" class="close" data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+        </div>
+
         <div class="p-5 text-center bg-light">
             <h1 class="mb-3">TESTING</h1>
             <div class="btn-group" role="group">
                 <button id="getVehiclesActionButton" type="button" class="btn btn-primary">Get Vehicles</button>
                 <select id="vehicleListDropdown" class="form-select btn-dark" hidden></select>
                 <div class="dropdown btn-group">
-                    <button class="btn btn-danger dropdown-toggle" type="button" id="vehicleActionDropdown" data-toggle="dropdown">
+                    <button class="btn btn-danger dropdown-toggle" type="button" id="vehicleActionDropdown" data-toggle="dropdown" disabled>
                     Actions
                     </button>
                     <div class="dropdown-menu">
