@@ -57,7 +57,7 @@ UI.getVehicles.addEventListener('click', () => {
             UI.vehicleList.add(new Option(vehicle.nickname, vehicle.id))
         }
 
-        UI.vehicleList.hidden = false
+        UI.vehicleList.disabled = false
         UI.vehicleActions.disabled = false
     });
 });
