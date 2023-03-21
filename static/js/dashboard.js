@@ -1,4 +1,3 @@
-
 const UI = Object.freeze({
 
     // get vehicles button
@@ -20,8 +19,15 @@ const UI = Object.freeze({
     lockDoors: document.getElementById('lockDoorsActionButton'),
 
     // unlock doors button
-    unlockDoors: document.getElementById('unlockDoorsActionButton')
+    unlockDoors: document.getElementById('unlockDoorsActionButton'),
+
+    // status div
+    statusDiv: document.getElementById('statusDiv')
 });
+
+function currentVID() {
+    return JSON.parse(UI.vehicleList.value).id
+}
 
 // abstracted function for sending api requests to the server
 function apiRequest(url, successCallback) {
@@ -32,64 +38,66 @@ function apiRequest(url, successCallback) {
     // make the API request
     fetch(url)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('server response was not OK (' + response.status + ')')
-            } else {
-                return response.json()
-            }
+            return response.json().then(json => {
+                if (response.ok) {
+                    successCallback(json.data)
+                } else {
+                    throw Error(json.error)
+                }
+            })
         })
-        .then(responseJson => {
-            successCallback(responseJson)
-        }).catch(error => {
-            console.log(error)
-        }).finally(() => {
+        .catch(error => {
+            showAlert(error.message, 'danger')
+        })
+        .finally(() => {
             hide_overlay()
         });
 }
 
 // update vehicle list
 UI.getVehicles.addEventListener('click', () => {
-    apiRequest('/api/v1/vehicles/list', json => {
+    apiRequest('/api/v1/vehicles/list', data => {
         console.log('vehicles fetched:')
-        console.log(json.data)
 
-        for(const vehicle of Object.values(json.data)) {
-            UI.vehicleList.add(new Option(vehicle.nickname, vehicle.id))
+        showAlert('vehicles fetched', 'success')
+
+        for (const vehicle of Object.values(data)) {
+            UI.vehicleList.add(new Option(vehicle.nickname, JSON.stringify(vehicle)))
         }
 
-        UI.vehicleList.disabled = false
-        UI.vehicleActions.disabled = false
+        UI.getVehicles.hidden = true
+        UI.vehicleList.hidden = false
     });
 });
 
 // get status
 UI.getStatus.addEventListener('click', () => {
-    apiRequest(`/api/v1/vehicles/${UI.vehicleList.value}/status`, json => {
-        console.log('status updated:')
-        console.log(json.data)
+    apiRequest(`/api/v1/vehicles/${currentVID()}/status`, data => {
+
+        showAlert('status fetched', 'success')
+
+        document.getElementById('remainingFuelProgressBar').style.width = data.fuelRemainingPercent + '%'
+        UI.statusDiv.hidden = false
     });
 });
 
 // start engine
 UI.startEngine.addEventListener('click', () => {
-    apiRequest(`/api/v1/vehicles/${UI.vehicleList.value}/start`, json => {
-        console.log('engine started:')
-        console.log(json.data)
+    apiRequest(`/api/v1/vehicles/${currentVID()}/start`, data => {
+        showAlert('engine started', 'success')
     });
 });
 
 // lock doors
 UI.lockDoors.addEventListener('click', () => {
-    apiRequest(`/api/v1/vehicles/${UI.vehicleList.value}/lock`, json => {
-        console.log('doors locked:')
-        console.log(json.data)
+    apiRequest(`/api/v1/vehicles/${currentVID()}/lock`, data => {
+        showAlert('doors locked', 'success')
     });
 });
 
 // unlock doors
 UI.unlockDoors.addEventListener('click', () => {
-    apiRequest(`/api/v1/vehicles/${UI.vehicleList.value}/unlock`, json => {
-        console.log('doors unlocked:')
-        console.log(json.data)
+    apiRequest(`/api/v1/vehicles/${currentVID()}/unlock`, data => {
+        showAlert('doors unlocked', 'success')
     });
 });
