@@ -16,6 +16,7 @@ load_dotenv(dotenv_path)
 username = os.environ.get("MAZDA_USERNAME")
 password = os.environ.get("MAZDA_PASSWORD")
 
+
 @app.route('/', methods=['GET'])
 async def dashboard():
     return render_template('dashboard.html')
@@ -77,6 +78,10 @@ async def mazda_api_call(api_function: callable):
         return {'data': result}, status.HTTP_200_OK
 
     except Exception as e:
+
+        # print exception
+        print(e)
+
         # return the error message, BAD_GATEWAY
         return {'error': str(e)}, status.HTTP_502_BAD_GATEWAY
 

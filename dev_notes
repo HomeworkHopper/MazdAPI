@@ -1,0 +1,40 @@
+Status API response:
+{
+   "data":{
+      "doorLocks":{
+         "driverDoorUnlocked":false,
+         "passengerDoorUnlocked":false,
+         "rearLeftDoorUnlocked":false,
+         "rearRightDoorUnlocked":false
+      },
+      "doors":{
+         "driverDoorOpen":false,
+         "fuelLidOpen":false,
+         "hoodOpen":false,
+         "passengerDoorOpen":false,
+         "rearLeftDoorOpen":false,
+         "rearRightDoorOpen":false,
+         "trunkOpen":false
+      },
+      "fuelDistanceRemainingKm":128.7,
+      "fuelRemainingPercent":19.5,
+      "hazardLightsOn":false,
+      "lastUpdatedTimestamp":"20230318153345",
+      "latitude":[double, REDACTED],
+      "longitude":[double, REDACTED],
+      "odometerKm":15725.8,
+      "positionTimestamp":[string, REDACTED],
+      "tirePressure":{
+         "frontLeftTirePressurePsi":null,
+         "frontRightTirePressurePsi":null,
+         "rearLeftTirePressurePsi":null,
+         "rearRightTirePressurePsi":null
+      },
+      "windows":{
+         "driverWindowOpen":false,
+         "passengerWindowOpen":false,
+         "rearLeftWindowOpen":false,
+         "rearRightWindowOpen":false
+      }
+   }
+}
