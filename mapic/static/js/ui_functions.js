@@ -7,9 +7,6 @@ function hide_overlay() {
 }
 
 
-
-
-
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
 
 function showAlert(message, type) {
