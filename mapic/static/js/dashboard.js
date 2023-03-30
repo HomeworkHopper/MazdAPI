@@ -21,52 +21,72 @@ const UI = Object.freeze({
     // unlock doors button
     unlockDoors: document.getElementById('unlockDoorsActionButton'),
 
+    // vehicle content div
+    vehicleContentDiv: document.getElementById('vehicleContent'),
+
     // status div
     statusDiv: document.getElementById('statusDiv')
 });
 
 function currentVID() {
-    return JSON.parse(UI.vehicleList.value).id
+    return JSON.parse(UI.vehicleList.value).id;
 }
 
-// abstracted function for sending api requests to the server
+// abstract function for sending api requests to the server
 function apiRequest(url, successCallback) {
 
-    // show a loading overlay
-    show_overlay()
+    // show the loading overlay
+    show_overlay();
 
-    // make the API request
+    // make the api request
     fetch(url)
         .then(response => {
-            return response.json().then(json => {
-                if (response.ok) {
-                    successCallback(json.data)
-                } else {
-                    throw Error(json.error)
-                }
-            })
+            if (!response.ok) {
+                // the server will always return an OK response, even if an error occurs, so
+                // any non-OK response indicates an issue beyond the scope of the application
+                throw new Error('Unable to contact server');
+            }
+            // pass the response JSON onto the next stage - the JSON itself will contain a success
+            // field indicating whether the server completed the request successfully, or not
+            return response.json();
         })
-        .catch(error => {
-            showAlert(error.message, 'danger')
+        .then(json => {
+            if (json.success) {
+                // the backend completed the request successfully - pass the resulting
+                // data to a user-provided callback function for further processing
+                successCallback(json.data);
+            } else {
+                // indicates that an error occurred on the server -error messages from the
+                // server are passed to us here, where we can display them to the user
+                throw new Error(`Server Error: ${json.error}`);
+            }
+        }).catch(error => {
+            // alert the user of an error
+            showAlert(error.message, 'danger');
         })
         .finally(() => {
-            hide_overlay()
+            // hide the loading overlay
+            hide_overlay();
         });
 }
 
 // update vehicle list
 UI.getVehicles.addEventListener('click', () => {
     apiRequest('/api/v1/vehicles/list', data => {
-        console.log('vehicles fetched:')
+        // vehicle list update callback
 
+        // indicate success
         showAlert('vehicles fetched', 'success')
 
+        // populate the vehicle dropdown
         for (const vehicle of Object.values(data)) {
             UI.vehicleList.add(new Option(vehicle.nickname, JSON.stringify(vehicle)))
         }
 
+        // update visibility of UI components
         UI.getVehicles.hidden = true
         UI.vehicleList.hidden = false
+        UI.vehicleContentDiv.hidden = false
     });
 });
 

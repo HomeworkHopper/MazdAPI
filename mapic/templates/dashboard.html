@@ -9,9 +9,9 @@
 
     <title>Dashboard</title>
 </head>
-<body>
+<body class="bg-dark">
 
-<div class="p-5 bg-dark text-center">
+<div class="p-4 text-center">
 
     <div id="liveAlertPlaceholder"></div>
 
@@ -64,64 +64,66 @@
     </div>
 </div>
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button"
-                role="tab">Status
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                role="tab">Vehicle Info
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button"
-                role="tab">Actions
-        </button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button"
-                role="tab">Settings
-        </button>
-    </li>
-</ul>
+<div id="vehicleContent" hidden>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button"
+                    role="tab">Status
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                    role="tab">Vehicle Info
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button"
+                    role="tab">Actions
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button"
+                    role="tab">Settings
+            </button>
+        </li>
+    </ul>
 
-<!-- Tab panes -->
-<div class="tab-content">
-    <div class="tab-pane active" id="status" role="tabpanel" tabindex="0">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="status" role="tabpanel" tabindex="0">
 
-        <button id="statusActionButton" type="button" class="btn btn-primary">Update Status</button>
+            <button id="statusActionButton" type="button" class="btn btn-primary">Update Status</button>
 
+        </div>
+        <div class="tab-pane" id="profile" role="tabpanel" tabindex="0">
+
+            <table class="table table-dark table-striped">
+                <tbody>
+                <tr>
+                    <th scope="row">Vin</th>
+                    <td>12345</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="tab-pane" id="messages" role="tabpanel" tabindex="0">
+            <button id="lockDoorsActionButton" type="button" class="btn btn-primary">Lock Doors</button>
+        </div>
+        <div class="tab-pane" id="settings" role="tabpanel" tabindex="0">...</div>
     </div>
-    <div class="tab-pane" id="profile" role="tabpanel" tabindex="0">
-
-        <table class="table table-dark table-striped">
-            <tbody>
-            <tr>
-                <th scope="row">Vin</th>
-                <td>12345</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-            </tr>
-            </tbody>
-        </table>
-
-    </div>
-    <div class="tab-pane" id="messages" role="tabpanel" tabindex="0">
-        <button id="lockDoorsActionButton" type="button" class="btn btn-primary">Lock Doors</button>
-    </div>
-    <div class="tab-pane" id="settings" role="tabpanel" tabindex="0">...</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="

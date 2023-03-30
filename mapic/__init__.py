@@ -1,6 +1,5 @@
 import pymazda
 from flask import Flask, render_template
-from flask_api import status
 
 from mapic.client import MapicClient
 from mapic.config import MapicConfig
@@ -26,11 +25,11 @@ async def mazda_api_call(api_function: callable):
             api_response = await api_function(mazda_client)
 
             # relay the response to the client
-            return {'data': api_response}, status.HTTP_200_OK
+            return {'success': True, 'data': api_response}
 
     except Exception as e:
         # relay the error message to the client
-        return {'error': str(e)}, status.HTTP_502_BAD_GATEWAY
+        return {'success': False, 'error': str(e)}
 
 
 ########################################################################################################################
