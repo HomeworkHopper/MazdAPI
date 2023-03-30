@@ -1,5 +1,4 @@
 Flask[async]==2.2.3
 flask_api==3.0.post1
 pymazda==0.3.8
-python-dotenv==1.0.0
 pyyaml==6.0
