@@ -1,0 +1,10 @@
+mapic:
+  config:
+    # your MyMazda email
+    email: EMAIL_HERE
+
+    # your MyMazda password
+    password: PASSWORD_HERE
+
+    # your region - If you live in North America, this will be: MNAO
+    region: REGION_HERE
