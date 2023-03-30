@@ -7,23 +7,23 @@ from mapic.config import MapicConfig
 
 app = Flask(__name__)
 
-default_config = MapicConfig.from_yaml('config.yml')
+config = MapicConfig.from_yaml('config.yml')
+
+mapic_client = MapicClient(email=config.email, password=config.password, region=config.region)
 
 
-async def mazda_api_call(api_function: callable, config=default_config):
+async def mazda_api_call(api_function: callable):
     """
     Initializes a MyMazda API connection and passes it to the provided function.
 
-    :param config: The configuration (email, password, region) to use in the API request
     :param api_function: The API function to call
     :return: The response returned by the API function, or an error if something went wrong
     """
 
     try:
-        # initiate a new mAPIc client from the provided config
-        async with MapicClient(config.email, config.password, config.region) as client:
+        async with mapic_client as mazda_client:
             # call the provided api function
-            api_response = await api_function(client)
+            api_response = await api_function(mazda_client)
 
             # relay the response to the client
             return {'data': api_response}, status.HTTP_200_OK
