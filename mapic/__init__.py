@@ -1,3 +1,6 @@
+import asyncio
+from functools import wraps
+
 import pymazda
 from flask import Flask, render_template
 from flask_api import status
@@ -8,6 +11,25 @@ from mapic.config import MapicConfig
 app = Flask(__name__)
 
 default_config = MapicConfig.from_yaml('config.yml')
+
+
+########################################################################################################################
+# Aiohttp exception bugfix, https://github.com/aio-libs/aiohttp/issues/4324#issuecomment-733884349
+########################################################################################################################
+def silence_event_loop_closed(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except RuntimeError as e:
+            if str(e) != 'Event loop is closed':
+                raise
+
+    return wrapper
+
+
+asyncio.proactor_events._ProactorBasePipeTransport.__del__ = \
+    silence_event_loop_closed(asyncio.proactor_events._ProactorBasePipeTransport.__del__)
 
 
 async def mazda_api_call(api_function: callable, config=default_config):
