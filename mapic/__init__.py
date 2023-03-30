@@ -2,13 +2,8 @@ import pymazda
 from flask import Flask, render_template
 
 from mapic.client import MapicClient
-from mapic.config import MapicConfig
 
 app = Flask(__name__)
-
-config = MapicConfig.from_yaml('config.yml')
-
-mapic_client = MapicClient(email=config.email, password=config.password, region=config.region)
 
 
 async def mazda_api_call(api_function: callable):
@@ -19,6 +14,14 @@ async def mazda_api_call(api_function: callable):
     :return: The response returned by the API function, or an error if something went wrong
     """
 
+    # fetch the MapicClient associated with this application
+    mapic_client = app.config.get('mapic_client')
+
+    # ensure the MapicClient has been initialized
+    if mapic_client is None:
+        return {'success': False, 'error': 'Credentials not set'}
+
+    # attempt to start the client and make a request
     try:
         async with mapic_client as mazda_client:
             # call the provided api function
@@ -31,10 +34,6 @@ async def mazda_api_call(api_function: callable):
         # relay the error message to the client
         return {'success': False, 'error': str(e)}
 
-
-########################################################################################################################
-# Webapp landing and API routes
-########################################################################################################################
 
 @app.route('/', methods=['GET'])
 async def dashboard():
