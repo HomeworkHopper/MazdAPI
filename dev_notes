@@ -1,3 +1,25 @@
+Vehicle List API response:
+{
+  "data": [
+    {
+      "automaticTransmission": true,
+      "carlineCode": "M3H",
+      "carlineName": "MAZDA3 2.5 S FWD",
+      "exteriorColorCode": "25D",
+      "exteriorColorName": "SNOWFLAKE WHITE PEARL",
+      "id": [integer, REDACTED],
+      "interiorColorCode": "BY7",
+      "interiorColorName": "BLACK",
+      "isElectric": false,
+      "modelCode": "M3H 25S 2A",
+      "modelName": "FWD HB",
+      "modelYear": "2022",
+      "nickname": [string, REDACTED],
+      "vin": [string, REDACTED]
+    }
+  ]
+}
+
 Status API response:
 {
    "data":{
