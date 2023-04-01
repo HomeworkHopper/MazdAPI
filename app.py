@@ -1,9 +1,8 @@
 import os
 
 import asyncio_patch
-
-from mapic import client
 from mapic import app
+from mapic import client
 
 if __name__ == "__main__":
     # generate a MapicConfig from config.yml

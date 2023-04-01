@@ -61,9 +61,9 @@ function apiRequest(url, successCallback) {
                 throw new Error(`Server Error: ${json.error}`);
             }
         }).catch(error => {
-            // alert the user of an error
-            showAlert(error.message, 'danger');
-        })
+        // alert the user of an error
+        showAlert(error.message, 'danger');
+    })
         .finally(() => {
             // hide the loading overlay
             hide_overlay();
@@ -83,11 +83,42 @@ UI.getVehicles.addEventListener('click', () => {
             UI.vehicleList.add(new Option(vehicle.nickname, JSON.stringify(vehicle)))
         }
 
+        // manually trigger vehicle change event
+        UI.vehicleList.dispatchEvent(new Event('change'))
+
         // update visibility of UI components
         UI.getVehicles.hidden = true
         UI.vehicleList.hidden = false
         UI.vehicleContentDiv.hidden = false
     });
+});
+
+// selected vehicle change
+UI.vehicleList.addEventListener('change', () => {
+
+    // get the JSON data associated with the selected vehicle
+    const selectedJson = JSON.parse(UI.vehicleList.value);
+
+    // display car model
+    $('#carModelInfo').html(selectedJson.carlineName);
+
+    // display car year
+    $('#carYearInfo').html(selectedJson.modelYear);
+
+    // display car transmission type
+    $('#carTransmissionInfo').html(selectedJson.automaticTransmission ? 'Automatic' : 'Manual');
+
+    // display car type (electric/gasoline)
+    $('#carElectricInfo').html(selectedJson.isElectric ? 'Electric' : 'Conventional (non-electric)');
+
+    // display car exterior color
+    $('#carExteriorColorInfo').html(selectedJson.exteriorColorName);
+
+    // display car interior color
+    $('#carInteriorColorInfo').html(selectedJson.interiorColorName);
+
+    // display car vin
+    $('#carVinInfo').html(selectedJson.vin);
 });
 
 // get status
