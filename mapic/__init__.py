@@ -40,6 +40,9 @@ async def dashboard():
     return render_template('dashboard.html')
 
 
+########################################################################################################################
+# API routes
+########################################################################################################################
 @app.route('/api/v1/vehicles/list', methods=['GET'])
 async def api_get_vehicles():
     async def get_vehicles(mazda_client: pymazda.Client):
