@@ -64,12 +64,12 @@ async def api_start_engine(vehicle_id):
     return await mazda_api_call(start_engine)
 
 
-@app.route('/api/v1/vehicles/<vehicle_id>/unlock', methods=['GET'])
-async def api_unlock_doors(vehicle_id):
-    async def unlock_doors(mazda_client: pymazda.Client):
-        return await mazda_client.unlock_doors(vehicle_id)
+@app.route('/api/v1/vehicles/<vehicle_id>/stop', methods=['GET'])
+async def api_stop_engine(vehicle_id):
+    async def stop_engine(mazda_client: pymazda.Client):
+        return await mazda_client.stop_engine(vehicle_id)
 
-    return await mazda_api_call(unlock_doors)
+    return await mazda_api_call(stop_engine)
 
 
 @app.route('/api/v1/vehicles/<vehicle_id>/lock', methods=['GET'])
@@ -78,3 +78,27 @@ async def api_lock_doors(vehicle_id):
         return await mazda_client.lock_doors(vehicle_id)
 
     return await mazda_api_call(lock_doors)
+
+
+@app.route('/api/v1/vehicles/<vehicle_id>/unlock', methods=['GET'])
+async def api_unlock_doors(vehicle_id):
+    async def unlock_doors(mazda_client: pymazda.Client):
+        return await mazda_client.unlock_doors(vehicle_id)
+
+    return await mazda_api_call(unlock_doors)
+
+
+@app.route('/api/v1/vehicles/<vehicle_id>/hazardsOn', methods=['GET'])
+async def api_hazards_on(vehicle_id):
+    async def hazards_on(mazda_client: pymazda.Client):
+        return await mazda_client.turn_on_hazard_lights(vehicle_id)
+
+    return await mazda_api_call(hazards_on)
+
+
+@app.route('/api/v1/vehicles/<vehicle_id>/hazardsOff', methods=['GET'])
+async def api_hazards_off(vehicle_id):
+    async def hazards_off(mazda_client: pymazda.Client):
+        return await mazda_client.turn_off_hazard_lights(vehicle_id)
+
+    return await mazda_api_call(hazards_off)
