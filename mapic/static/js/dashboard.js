@@ -6,20 +6,26 @@ const UI = Object.freeze({
     // vehicle list dropdown
     vehicleList: document.getElementById('vehicleListDropdown'),
 
-    // vehicle action dropdown
-    vehicleActions: document.getElementById('vehicleActionDropdown'),
-
     // get status button
-    getStatus: document.getElementById('statusActionButton'),
+    getStatus: document.getElementById('updateStatusButton'),
 
     // start engine button
     startEngine: document.getElementById('startEngineActionButton'),
+
+    // stop engine button
+    stopEngine: document.getElementById('stopEngineActionButton'),
 
     // lock doors button
     lockDoors: document.getElementById('lockDoorsActionButton'),
 
     // unlock doors button
     unlockDoors: document.getElementById('unlockDoorsActionButton'),
+
+    // turn on hazard lights button
+    hazardsOn: document.getElementById('turnOnHazardsButton'),
+
+    // turn off hazard light button
+    hazardsOff: document.getElementById('turnOffHazardsButton'),
 
     // vehicle content div
     vehicleContentDiv: document.getElementById('vehicleContent'),
@@ -28,8 +34,16 @@ const UI = Object.freeze({
     statusDiv: document.getElementById('statusDiv')
 });
 
+// returns the vehicle id associated with the currently selected vehicle.
+// (this id is required by all vehicle-related Mazda API calls)
 function currentVID() {
     return JSON.parse(UI.vehicleList.value).id;
+}
+
+// converts kilometers to a unit my American brain is accustomed to.
+// result is truncated to the nearest mile
+function KmToMiles(km) {
+    return Math.floor(km * 0.621371);
 }
 
 // abstract function for sending api requests to the server
@@ -70,32 +84,8 @@ function apiRequest(url, successCallback) {
         });
 }
 
-// update vehicle list
-UI.getVehicles.addEventListener('click', () => {
-    apiRequest('/api/v1/vehicles/list', data => {
-        // vehicle list update callback
-
-        // indicate success
-        showAlert('vehicles fetched', 'success')
-
-        // populate the vehicle dropdown
-        for (const vehicle of Object.values(data)) {
-            UI.vehicleList.add(new Option(vehicle.nickname, JSON.stringify(vehicle)))
-        }
-
-        // manually trigger vehicle change event
-        UI.vehicleList.dispatchEvent(new Event('change'))
-
-        // update visibility of UI components
-        UI.getVehicles.hidden = true
-        UI.vehicleList.hidden = false
-        UI.vehicleContentDiv.hidden = false
-    });
-});
-
-// selected vehicle change
-UI.vehicleList.addEventListener('change', () => {
-
+// populates the base info table for the currently selected vehicle.
+function setBaseInfo() {
     // get the JSON data associated with the selected vehicle
     const selectedJson = JSON.parse(UI.vehicleList.value);
 
@@ -119,36 +109,113 @@ UI.vehicleList.addEventListener('change', () => {
 
     // display car vin
     $('#carVinInfo').html(selectedJson.vin);
-});
+}
 
-// get status
-UI.getStatus.addEventListener('click', () => {
-    apiRequest(`/api/v1/vehicles/${currentVID()}/status`, data => {
+// populates the status info tables for the currently selected vehicle
+function refreshStatus() {
 
-        showAlert('status fetched', 'success')
+    const id = currentVID();
 
-        document.getElementById('remainingFuelProgressBar').style.width = data.fuelRemainingPercent + '%'
+    // make an API request to fetch the most recent vehicle status
+    apiRequest(`/api/v1/vehicles/${id}/status`, data => {
+
+        // fuel and mileage
+        $('#fuelRemainingPercent').html(data.fuelRemainingPercent + '%');
+        $('#milesRemaining').html(KmToMiles(data.fuelDistanceRemainingKm) + ' miles');
+        $('#totalMileage').html(KmToMiles(data.odometerKm) + ' miles');
+
+        // tire pressure
+        $('#driverFrontTirePressure').html(data.tirePressure.frontLeftTirePressurePsi || 'N/A');
+        $('#passengerFrontTirePressure').html(data.tirePressure.frontRightTirePressurePsi || 'N/A');
+        $('#driverRearTirePressure').html(data.tirePressure.rearLeftTirePressurePsi || 'N/A');
+        $('#passengerRearTirePressure').html(data.tirePressure.rearRightTirePressurePsi || 'N/A');
+
+        // door ajar status (open/closed)
+        $('#driverFrontDoorOpened').html(data.doors.driverDoorOpen ? 'open' : 'closed');
+        $('#passengerFrontDoorOpened').html(data.doors.passengerDoorOpen ? 'open' : 'closed');
+        $('#driverRearDoorOpened').html(data.doors.rearLeftDoorOpen ? 'open' : 'closed');
+        $('#passengerRearDoorOpened').html(data.doors.rearRightDoorOpen ? 'open' : 'closed');
+
+        // door lock status (locked/unlocked)
+        $('#driverFrontDoorLocked').html(data.doorLocks.driverDoorUnlocked ? 'unlocked' : 'locked');
+        $('#passengerFrontDoorLocked').html(data.doorLocks.passengerDoorUnlocked ? 'unlocked' : 'locked');
+        $('#driverRearDoorLocked').html(data.doorLocks.rearLeftDoorUnlocked ? 'unlocked' : 'locked');
+        $('#passengerRearDoorLocked').html(data.doorLocks.rearRightDoorUnlocked ? 'unlocked' : 'locked');
+
+        // reveal the status section
         UI.statusDiv.hidden = false
+
+        showAlert('Status Fetched', 'success')
+    });
+}
+
+// selected vehicle change
+UI.vehicleList.addEventListener('change', () => setBaseInfo());
+
+// update vehicle list ('/api/v1/vehicles/list')
+UI.getVehicles.addEventListener('click', () => {
+    apiRequest('/api/v1/vehicles/list', data => {
+
+        // populate the vehicle dropdown
+        for (const vehicle of Object.values(data)) {
+            UI.vehicleList.add(new Option(vehicle.nickname, JSON.stringify(vehicle)))
+        }
+
+        // manually update base info
+        setBaseInfo();
+
+        // update visibility of UI components
+        UI.getVehicles.hidden = true
+        UI.vehicleList.hidden = false
+        UI.vehicleContentDiv.hidden = false
+
+        // indicate success
+        showAlert('Vehicles Fetched', 'success')
     });
 });
 
-// start engine
+// get status ('/api/v1/vehicles/<vehicle_id>/status')
+UI.getStatus.addEventListener('click', () => refreshStatus());
+
+// start engine ('/api/v1/vehicles/<vehicle_id>/start')
 UI.startEngine.addEventListener('click', () => {
     apiRequest(`/api/v1/vehicles/${currentVID()}/start`, data => {
-        showAlert('engine started', 'success')
+        showAlert('Engine Started', 'success')
     });
 });
 
-// lock doors
+// stop engine ('/api/v1/vehicles/<vehicle_id>/stop')
+UI.stopEngine.addEventListener('click', () => {
+    apiRequest(`/api/v1/vehicles/${currentVID()}/stop`, data => {
+        showAlert('Engine Stopped', 'success')
+    });
+});
+
+// lock doors ('/api/v1/vehicles/<vehicle_id>/lock')
 UI.lockDoors.addEventListener('click', () => {
     apiRequest(`/api/v1/vehicles/${currentVID()}/lock`, data => {
-        showAlert('doors locked', 'success')
+        console.log(data)
+        showAlert('Doors Locked', 'success')
     });
 });
 
-// unlock doors
+// unlock doors ('/api/v1/vehicles/<vehicle_id>/unlock')
 UI.unlockDoors.addEventListener('click', () => {
     apiRequest(`/api/v1/vehicles/${currentVID()}/unlock`, data => {
-        showAlert('doors unlocked', 'success')
+        showAlert('Doors Unlocked', 'success')
+    });
+});
+
+// turn on hazard lights ('/api/v1/vehicles/<vehicle_id>/hazardsOn')
+UI.hazardsOn.addEventListener('click', () => {
+    apiRequest(`/api/v1/vehicles/${currentVID()}/hazardsOn`, data => {
+        showAlert('Alarm Activated', 'success')
+    });
+});
+
+// turn off hazard lights ('/api/v1/vehicles/<vehicle_id>/hazardsOff')
+UI.hazardsOff.addEventListener('click', () => {
+    apiRequest(`/api/v1/vehicles/${currentVID()}/hazardsOff`, data => {
+        showAlert('Alarm Deactivated', 'success')
     });
 });
