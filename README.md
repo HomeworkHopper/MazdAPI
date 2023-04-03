@@ -16,6 +16,14 @@ This includes, but is not neccesarilly limited to:
 - Remotely locking/unlocking the doors of a given vehicle
 - Remotely starting/stopping the engine of a given vehicle
 
+## Usage & Development
+
+Getting this application up and running should require only the following few steps:
+1. Clone this repository
+2. Install the required dependencies (`python3 -r requirements.txt`)
+3. Create a `config.yml` file containing your MyMazda email, password, and region (see `config_example.yml` for reference)
+4. Run the application with `python3 app.py`
+
 ## Scope & Limitations
 
 This project was primarally intended to serve as a fun experiment in web-development, and was NOT designed to be all-encompassing in capability or particularly appealing to view.
